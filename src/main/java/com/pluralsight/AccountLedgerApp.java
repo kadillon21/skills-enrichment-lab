@@ -1,11 +1,11 @@
 package com.pluralsight;
 
-import com.pluralsight.controller.AppController;
+import com.pluralsight.CommandLineRunner.CliRouter;
 
 public class AccountLedgerApp {
 
     public static void main(String[] args) {
-        AppController appController = new AppController();
-        appController.run();
+        CliRouter CliRouter = new CliRouter();
+        CliRouter.run();
     }
 }

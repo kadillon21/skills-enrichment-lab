@@ -3,9 +3,9 @@ package com.pluralsight.service;
 
 import com.pluralsight.model.SearchCriteria;
 import com.pluralsight.model.Transaction;
-import com.pluralsight.util.ConsoleUtilities;
-import com.pluralsight.util.UserInput;
-import com.pluralsight.ui.Menus;
+import com.pluralsight.cli.util.ConsoleUtilities;
+import com.pluralsight.cli.util.UserInput;
+import com.pluralsight.cli.ui.Menus;
 
 import java.time.LocalDate;
 import java.util.List;
