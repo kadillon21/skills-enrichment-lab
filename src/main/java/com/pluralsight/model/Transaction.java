@@ -1,14 +1,41 @@
 package com.pluralsight.model;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import jakarta.persistence.Entity;
+
+@Entity
+@Table(name = "transactions")
 public class Transaction {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    
+    @NotNull
     private LocalDate date;
+    
+    @NotNull
     private LocalTime time;
+
+    @NotBlank
     private String description;
+
+    @NotBlank
     private String vendor;
+    
+    @NotNull
     private double amount;
+
+    @ManyToOne
+    @JoinColumn(name = "ledger_account_id")
+    private LedgerAccount ledgerAccount;
+
+    protected Transaction() {}
 
     // Constructor for new transactions
     public Transaction(LocalDate date, LocalTime time, String description, String vendor, double amount) {
@@ -20,6 +47,10 @@ public class Transaction {
     }
 
     // All getters and setters for transaction object
+    public Integer getId() {
+        return id;
+    }
+
     public LocalDate getDate() {
         return date;
     }
