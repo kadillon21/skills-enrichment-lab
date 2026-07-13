@@ -1,11 +1,12 @@
 package com.pluralsight;
 
-import com.pluralsight.CommandLineRunner.CliRouter;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@SpringBootApplication
 public class AccountLedgerApp {
 
     public static void main(String[] args) {
-        CliRouter CliRouter = new CliRouter();
-        CliRouter.run();
+        SpringApplication.run(AccountLedgerApp.class, args);
     }
 }
