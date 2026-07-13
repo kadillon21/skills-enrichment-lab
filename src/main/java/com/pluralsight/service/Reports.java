@@ -37,7 +37,7 @@ public class Reports {
     }
 
     // displays transaction menu that shows transactions for the previous month
-    public static void previousMonthReport(List<Transaction> transactions) {
+    public static List<Transaction> previousMonthReport(List<Transaction> transactions) {
         LocalDate now = LocalDate.now();
         LocalDate previousMonthStart = now.minusMonths(1).withDayOfMonth(1);
         LocalDate previousMonthEnd = previousMonthStart.withDayOfMonth(previousMonthStart.lengthOfMonth());
