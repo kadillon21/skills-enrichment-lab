@@ -16,6 +16,13 @@ public class TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
+    public Transaction createTransaction(Transaction transaction){
+        transaction.setId(0);
+        return transactionRepository.save(transaction);
+
+
+    }
+
 
     public List<Transaction> getAll(){
         return transactionRepository.findAll();
@@ -38,4 +45,9 @@ public class TransactionService {
         return transactionRepository.save(existing);
 
     }
+
+   public void deleteTransaction(int transactionId){
+         transactionRepository.deleteById(transactionId);
+    }
+
 }
