@@ -40,7 +40,13 @@ public class TransactionController {
         return transactionRepository.save(transaction);
     }
 
-    // TODO: POST /iport allow upoad of a CSV file
+//    @PutMapping
+//    public Transaction updateTransaction(@RequestParam Integer transactionId){
+//
+//
+//    }
+
+    // TODO: POST /import allow upload of a CSV file
     // TODO: PUT /{id} — reuse the getById() not-found pattern
     // TODO: DELETE /{id}
     // TODO: GET /search — accept SearchCriteria as query params. Start simple: findAll() +
