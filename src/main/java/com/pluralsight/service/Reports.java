@@ -6,6 +6,7 @@ import com.pluralsight.model.Transaction;
 import com.pluralsight.cli.util.ConsoleUtilities;
 import com.pluralsight.cli.util.UserInput;
 import com.pluralsight.cli.ui.Menus;
+import com.pluralsight.repository.TransactionRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,15 +14,26 @@ import java.util.List;
 
 
 public class Reports {
+    //Injecting Repo
+    private TransactionRepository transactionRepository;
+
+    //Constructor
+    public Reports(TransactionRepository transactionRepository) {
+        this.transactionRepository = transactionRepository;
+    }
+
+
 
     // displays transaction menu that shows transactions for the current month
-    public static void monthToDateReport(List<Transaction> transactions) {
+    public static List<Transaction> monthToDateReport(List<Transaction> transactions) {
         LocalDate now = LocalDate.now();
         LocalDate startOfMonth = now.withDayOfMonth(1);
-        List<Transaction> filtered = transactions.stream().filter(
-                transaction -> !transaction.getDate().isBefore(startOfMonth)
-                        && !transaction.getDate().isAfter(now)).toList();
-        Menus.displayTransactions(filtered);
+
+        return transactions.stream()
+                .filter(transaction ->
+                        !transaction.getDate().isBefore(startOfMonth)
+                                && !transaction.getDate().isAfter(now))
+                .toList();
     }
 
     // displays transaction menu that shows transactions for the previous month
