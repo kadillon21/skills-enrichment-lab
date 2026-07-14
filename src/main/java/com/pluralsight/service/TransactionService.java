@@ -40,8 +40,7 @@ public class TransactionService {
         existing.setAmount(transaction.getAmount());
         existing.setDescription(transaction.getDescription());
         existing.setVendor(transaction.getVendor());
-        existing.isDeposit();
-        existing.isPayment();
+        existing.setLedgerAccount(transaction.getLedgerAccount());
         return transactionRepository.save(existing);
 
     }

@@ -41,18 +41,15 @@ public class TransactionController {
         return ResponseEntity.ok().body(transaction);
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    public Transaction create(@Valid @RequestBody Transaction transaction) {
-        return transactionRepository.save(transaction);
-    }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Transaction> updateTransaction(@PathVariable Integer transactionId, @RequestBody Transaction transaction){
-        Transaction update = transactionService.updateTransaction(transactionId,transaction);
-        if (transactionService.getById(transactionId) == null)
-            throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
-        return ResponseEntity.status(HttpStatus.CREATED).body(update);
+    public ResponseEntity<Transaction> updateTransaction(@PathVariable Integer id, @RequestBody Transaction transaction){
+        // Check if it exists first
+        if (transactionService.getById(id) == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        Transaction update = transactionService.updateTransaction(id, transaction);
+        return ResponseEntity.ok().body(update);
     }
 
     @PostMapping()
