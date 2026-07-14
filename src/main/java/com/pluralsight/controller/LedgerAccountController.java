@@ -22,11 +22,12 @@ public class LedgerAccountController {
         this.ledgerAccountService = ledgerAccountService;
     }
     
-//     @GetMapping("")
-//     public ResponseEntity<List<LedgerAccount>> getAll() {
-//         return ledgerAccountService.getAll();
-//     }
-//
+    @GetMapping("")
+    public ResponseEntity<List<LedgerAccount>> getAll() {
+        ledgerAccountService.getAll();
+        return ResponseEntity.status(200).build();
+    }
+
 //     @PostMapping("")
 //     public LedgerAccount create(LedgerAccount ledgerAccount) {
 //         return ledgerAccountService.create(ledgerAccount);
