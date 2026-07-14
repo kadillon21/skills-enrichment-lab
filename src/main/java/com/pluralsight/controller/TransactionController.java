@@ -3,8 +3,10 @@ package com.pluralsight.controller;
 import com.pluralsight.model.Transaction;
 import com.pluralsight.repository.TransactionRepository;
 import com.pluralsight.service.CsvImportService;
+import com.pluralsight.service.TransactionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -16,10 +18,12 @@ import java.util.List;
 public class TransactionController {
 
     private final TransactionRepository transactionRepository;
+    private final TransactionService transactionService;
     private final CsvImportService csvImportService;
 
-    public TransactionController(TransactionRepository transactionRepository, CsvImportService csvImportService) {
+    public TransactionController(TransactionRepository transactionRepository, TransactionService transactionService, CsvImportService csvImportService) {
         this.transactionRepository = transactionRepository;
+        this.transactionService = transactionService;
         this.csvImportService = csvImportService;
     }
 
@@ -29,9 +33,12 @@ public class TransactionController {
     }
 
     @GetMapping("/{id}")
-    public Transaction getById(@PathVariable Integer id) {
-        return transactionRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transaction not found"));
+    public ResponseEntity <Transaction> getById(@PathVariable Integer id) {
+        Transaction transaction = transactionService.getById(id);
+
+        if(transaction == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        return ResponseEntity.ok().body(transaction);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -40,9 +47,23 @@ public class TransactionController {
         return transactionRepository.save(transaction);
     }
 
-//    @PutMapping
-//    public Transaction updateTransaction(@RequestParam Integer transactionId){
-//
+    @PutMapping("/{id}")
+    public ResponseEntity<Transaction> updateTransaction(@PathVariable Integer transactionId, @RequestBody Transaction transaction){
+        Transaction update = transactionService.updateTransaction(transactionId,transaction);
+        if (transactionService.getById(transactionId) == null)
+            throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.CREATED).body(update);
+    }
+
+    @PostMapping()
+    public ResponseEntity<Transaction> addTransaction(@RequestBody Transaction transaction){
+        Transaction create = transactionService.createTransaction(transaction);
+        return ResponseEntity.status(HttpStatus.CREATED).body(create);
+
+    }
+
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<Transaction> deleteTranaction(@PathVariable Integer transactionId){
 //
 //    }
 
