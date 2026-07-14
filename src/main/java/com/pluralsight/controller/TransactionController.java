@@ -62,10 +62,14 @@ public class TransactionController {
 
     }
 
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Transaction> deleteTranaction(@PathVariable Integer transactionId){
-//
-//    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Transaction> deleteTranaction(@PathVariable Integer transactionId){
+        if(transactionService.getById(transactionId) == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        transactionService.deleteTransaction(transactionId);
+        return ResponseEntity.noContent().build();
+
+    }
 
     // TODO: POST /import allow upload of a CSV file
     // TODO: PUT /{id} — reuse the getById() not-found pattern
