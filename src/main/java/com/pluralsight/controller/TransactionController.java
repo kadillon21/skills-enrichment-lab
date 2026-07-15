@@ -5,6 +5,7 @@ import com.pluralsight.repository.TransactionRepository;
 import com.pluralsight.service.CsvImportService;
 import com.pluralsight.service.TransactionService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,6 +54,15 @@ public class TransactionController {
                                                     @RequestParam(name = "maxAmount",required = false)Double maxAmount,
                                                     @RequestParam(name = "transType", required = false)String transType){
         return ResponseEntity.ok().body( transactionService.search(transactionId,minAmount,maxAmount,startDate,endDate,description,vendor,ledgerId,transType));
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<String> exportTransactions(){
+        String cvsData = transactionService.exportCsv();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "Attachment; filename=\"tranactions.csv\"")
+                .header(HttpHeaders.CONTENT_TYPE,"text/csv")
+                .body(cvsData);
     }
 
 
