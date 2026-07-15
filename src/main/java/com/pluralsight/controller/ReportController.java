@@ -47,8 +47,8 @@ public class ReportController {
         return ResponseEntity.ok(Reports.yearToDate(transactions));
     }
 
-    @GetMapping("/by-vendor/{vendor}")
-    public ResponseEntity<List<Transaction>> getByVendor(@PathVariable String vendor){
+    @GetMapping("/by-vendor")
+    public ResponseEntity<List<Transaction>> getByVendor(@RequestParam String vendor){
         List<Transaction> transactions = transactionService.search(
                 null,
                 null,
