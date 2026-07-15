@@ -33,9 +33,6 @@ public class TransactionService {
         return transactionRepository.findById(id).orElse(null);
     }
 
-    public List<Transaction> getByVendor(String vendor){
-        return transactionRepository.findByVendorContainingIgnoreCase(vendor);
-    }
 
     public Transaction updateTransaction(int transactionId, Transaction transaction){
         Transaction existing = transactionRepository.findById(transactionId).orElse(null);

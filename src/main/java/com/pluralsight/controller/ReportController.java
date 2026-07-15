@@ -49,7 +49,9 @@ public class ReportController {
 
     @GetMapping("/by-vendor/{vendor}")
     public ResponseEntity<List<Transaction>> getByVendor(@PathVariable String vendor){
+        List<Transaction> transactions = transactionService.getByVendor(vendor);
 
+        return ResponseEntity.ok(transactions);
     }
 //
 //    @GetMapping("/summary-by-account")
