@@ -99,6 +99,7 @@ public String exportCsv(){
         csvText.append("Vendor");
         csvText.append("|");
         csvText.append("Amount");
+        csvText.append("\n");
 
         for(Transaction t : allTransactions){
             csvText.append(t.getDate());
