@@ -49,7 +49,17 @@ public class ReportController {
 
     @GetMapping("/by-vendor/{vendor}")
     public ResponseEntity<List<Transaction>> getByVendor(@PathVariable String vendor){
-        List<Transaction> transactions = transactionService.getByVendor(vendor);
+        List<Transaction> transactions = transactionService.search(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                vendor,
+                null,
+                null
+        );
 
         return ResponseEntity.ok(transactions);
     }
