@@ -1,7 +1,6 @@
 package com.pluralsight.controller;
 
 import com.pluralsight.model.Transaction;
-import com.pluralsight.repository.TransactionRepository;
 import com.pluralsight.service.ReportService;
 import com.pluralsight.service.Reports;
 import com.pluralsight.service.TransactionService;
@@ -74,12 +73,4 @@ public class ReportController {
 
         return ResponseEntity.ok(summary);
     }
-
-
-
-
-    // TODO: port the date-range logic already sitting in service/Reports.java —
-    // the filtering logic itself doesn't need to change, it just needs to read from
-    // transactionRepository.findAll() instead of the old in-memory list, and return
-    // the result instead of printing it to console.
 }
