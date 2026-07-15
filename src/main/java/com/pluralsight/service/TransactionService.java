@@ -18,7 +18,7 @@ public class TransactionService {
     }
 
     public Transaction createTransaction(Transaction transaction){
-        transaction.setId(0);
+        transaction.setId(null);
         return transactionRepository.save(transaction);
 
 
