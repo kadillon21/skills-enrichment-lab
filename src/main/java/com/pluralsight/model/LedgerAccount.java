@@ -12,7 +12,7 @@ public class LedgerAccount {
     private Integer id;
 
     @NotBlank
-    private String name; // "Repair & Mechanic", "Marketing", "Sales", "Operations"
+    private String name; 
 
     private String description;
 
