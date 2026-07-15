@@ -3,9 +3,15 @@ package com.pluralsight.service;
 import com.pluralsight.model.Transaction;
 import com.pluralsight.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -80,7 +86,40 @@ public class TransactionService {
                 .toList();
     }
 
-   public void deleteTransaction(int transactionId){
+
+public String exportCsv(){
+
+        List<Transaction> allTransactions = transactionRepository.findAll();
+        StringBuilder csvText = new StringBuilder();
+        csvText.append("Date");
+        csvText.append("|");
+        csvText.append("Time");
+        csvText.append("|");
+        csvText.append("Description");
+        csvText.append("|");
+        csvText.append("Vendor");
+        csvText.append("|");
+        csvText.append("Amount");
+        csvText.append("\n");
+
+        for(Transaction t : allTransactions){
+            csvText.append(t.getDate());
+            csvText.append("|");
+            csvText.append(t.getTime());
+            csvText.append("|");
+            csvText.append(t.getDescription());
+            csvText.append("|");
+            csvText.append(t.getVendor());
+            csvText.append("|");
+            csvText.append(t.getAmount());
+            csvText.append("\n");
+
+        }
+        return csvText.toString();
+
+}
+
+    public void deleteTransaction(int transactionId){
          transactionRepository.deleteById(transactionId);
     }
 
