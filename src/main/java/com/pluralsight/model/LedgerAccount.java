@@ -1,5 +1,8 @@
 package com.pluralsight.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -18,7 +21,8 @@ public class LedgerAccount {
 
     protected LedgerAccount() {}
 
-    public LedgerAccount(String name, String description) {
+    @JsonCreator
+    public LedgerAccount(@JsonProperty("name") String name, @JsonProperty("description") String description) {
         this.name = name;
         this.description = description;
     }

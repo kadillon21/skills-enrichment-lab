@@ -19,4 +19,8 @@ public class LedgerAccountService {
     public List<LedgerAccount> getAll() {
         return ledgerAccountRepository.findAll();
     }
+
+    public LedgerAccount create(LedgerAccount ledgerAccount) {
+        return ledgerAccountRepository.save(ledgerAccount);
+    }
 }

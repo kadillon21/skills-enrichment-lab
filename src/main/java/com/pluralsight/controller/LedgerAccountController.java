@@ -2,9 +2,9 @@ package com.pluralsight.controller;
 
 import com.pluralsight.model.LedgerAccount;
 import com.pluralsight.service.LedgerAccountService;
-import com.pluralsight.repository.LedgerAccountRepository;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,14 +24,15 @@ public class LedgerAccountController {
     
     @GetMapping("")
     public ResponseEntity<List<LedgerAccount>> getAll() {
-        ledgerAccountService.getAll();
-        return ResponseEntity.status(200).build();
+        return ResponseEntity.ok(ledgerAccountService.getAll());
     }
 
-//     @PostMapping("")
-//     public LedgerAccount create(LedgerAccount ledgerAccount) {
-//         return ledgerAccountService.create(ledgerAccount);
-//     }
+    @PostMapping("")
+    public ResponseEntity<LedgerAccount> create(@RequestBody LedgerAccount ledgerAccount) {
+        System.out.println("DEBUG name=[" + ledgerAccount.getName() + "] description=[" + ledgerAccount.getDescription() + "]");
+        LedgerAccount saved = ledgerAccountService.create(ledgerAccount);
+        return ResponseEntity.status(201).body(saved);
+    }
 //
 //     @PutMapping("")
 //     public ResponseEntity<LedgerAccount> update(LedgerAccount ledgerAccount) {
