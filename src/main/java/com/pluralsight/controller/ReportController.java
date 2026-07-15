@@ -29,30 +29,28 @@ public class ReportController {
 
     @GetMapping("/month-to-date")
     public ResponseEntity<List<Transaction>> getMonthToDate() {
-        List<Transaction> transactions = transactionService.getAllTransactions();
+        List<Transaction> transactions = transactionService.getAll();
 
         return ResponseEntity.ok(Reports.monthToDateReport(transactions));
     }
 
     @GetMapping("/previous-month")
     public ResponseEntity<List<Transaction>> getPreviousMonth() {
-        return ResponseEntity.ok(Reports.previousMonthReport(
-                transactionService.getAllTransactions()));
+        List<Transaction> transactions = transactionService.getAll();
+        return ResponseEntity.ok(Reports.previousMonthReport(transactions));
     }
 
     @GetMapping("/year-to-date")
     public ResponseEntity<List<Transaction>> getYearToDate(){
-        List<Transaction> transactions = transactionService.getAllTransactions();
+        List<Transaction> transactions = transactionService.getAll();
 
         return ResponseEntity.ok(Reports.yearToDate(transactions));
     }
 
-//    @GetMapping("/by-vendor/{id}")
-//    public ResponseEntity<List<Transaction>> getByVendor(){
-//        List<Transaction> transactions = transactionService.getAllTransactions();
-//
-//        return ResponseEntity.ok(transactions.getTransactionById());
-//    }
+    @GetMapping("/by-vendor/{vendor}")
+    public ResponseEntity<List<Transaction>> getByVendor(@PathVariable String vendor){
+
+    }
 //
 //    @GetMapping("/summary-by-account")
 
