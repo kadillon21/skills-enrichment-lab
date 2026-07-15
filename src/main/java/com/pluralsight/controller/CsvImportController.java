@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/transactions")
-@CrossOrigin
 public class CsvImportController {
 
     private final CsvImportService csvImportService;
