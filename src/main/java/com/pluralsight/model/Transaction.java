@@ -81,4 +81,36 @@ public class Transaction {
         return amount < 0;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public LocalTime setTime(LocalTime time) {
+        this.time = time;
+        return time;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setVendor(String vendor) {
+        this.vendor = vendor;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public LedgerAccount getLedgerAccount() {
+        return ledgerAccount;
+    }
+
+    public void setLedgerAccount(LedgerAccount ledgerAccount) {
+        this.ledgerAccount = ledgerAccount;
+    }
 }

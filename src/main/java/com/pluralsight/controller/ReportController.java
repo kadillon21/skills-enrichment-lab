@@ -47,9 +47,14 @@ public class ReportController {
         return ResponseEntity.ok(Reports.yearToDate(transactions));
     }
 
-//    public TransactionRepository getTransactionRepository() {
-//        return transactionRepository;
+//    @GetMapping("/by-vendor/{id}")
+//    public ResponseEntity<List<Transaction>> getByVendor(){
+//        List<Transaction> transactions = transactionService.getAllTransactions();
+//
+//        return ResponseEntity.ok(transactions.getTransactionById());
 //    }
+//
+//    @GetMapping("/summary-by-account")
 
     public ReportService getReportService() {
         return reportService;
