@@ -46,7 +46,7 @@ public class TransactionService {
 
     }
 
-    public List<Transaction> search(Integer transactionId , Double minAmount, Double maxAmount, LocalDate startDate,LocalDate endDate, String description, String vendor, Integer ledgerId,Boolean isPayment,Boolean isDeposit){
+    public List<Transaction> search(Integer transactionId , Double minAmount, Double maxAmount, LocalDate startDate,LocalDate endDate, String description, String vendor, Integer ledgerId,String transType){
         List<Transaction> transactions;
         if(transactionId != null){
             Transaction t = transactionRepository.findById(transactionId).orElse(null);
@@ -62,8 +62,20 @@ public class TransactionService {
                 .filter(transaction -> description == null || description.equalsIgnoreCase(transaction.getDescription()))
                 .filter(transaction -> vendor == null || vendor.equalsIgnoreCase(transaction.getVendor()))
                 .filter(transaction -> ledgerId == null || ledgerId.equals(transaction.getLedgerAccount().getId()))
-                .filter(transaction -> isDeposit == null || isDeposit.equals(transaction.isDeposit()))
-                .filter(transaction -> isPayment == null || isPayment .equals(transaction.isPayment()))
+                .filter(transaction -> {
+                    if( transType == null || transType.isBlank()){
+                        return true;
+                    }
+                    if(transType.equalsIgnoreCase("DEPOSITS")){
+                        return transaction.isDeposit();
+                    }
+                    if (transType.equalsIgnoreCase("Payments")){
+                        return transaction.isPayment();
+                    }
+                    return true;
+
+                })
+
                 .toList();
     }
 
