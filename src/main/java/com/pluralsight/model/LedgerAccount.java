@@ -1,8 +1,5 @@
 package com.pluralsight.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -15,14 +12,13 @@ public class LedgerAccount {
     private Integer id;
 
     @NotBlank
-    private String name; // "Repair & Mechanic", "Marketing", "Sales", "Operations"
+    private String name; 
 
     private String description;
 
     protected LedgerAccount() {}
 
-    @JsonCreator
-    public LedgerAccount(@JsonProperty("name") String name, @JsonProperty("description") String description) {
+    public LedgerAccount(String name, String description) {
         this.name = name;
         this.description = description;
     }

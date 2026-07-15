@@ -23,4 +23,21 @@ public class LedgerAccountService {
     public LedgerAccount create(LedgerAccount ledgerAccount) {
         return ledgerAccountRepository.save(ledgerAccount);
     }
+
+    public LedgerAccount update(int id, LedgerAccount ledgerAccount) {
+        LedgerAccount existing = ledgerAccountRepository.findById(id).get();
+        existing.setName(ledgerAccount.getName());
+        existing.setDescription(ledgerAccount.getDescription());
+        return ledgerAccountRepository.save(existing);
+    }
+
+    public void delete(int id){
+        LedgerAccount ledgerAccount = ledgerAccountRepository.findById(id).get();
+        ledgerAccountRepository.delete(ledgerAccount);
+    }
+
+    public LedgerAccount findAllTransactions(int id) {
+        return ledgerAccountRepository.findById(id).get();
+    }
 }
+
