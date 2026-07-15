@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -121,6 +123,8 @@ public class ReportService {
 
     }
 
+
+
     // Method to allow user to edit specific search criteria
     public static void editCriteria(SearchCriteria criteria) {
         Menus.editValuesMenu();
@@ -166,4 +170,21 @@ public class ReportService {
 
         }
     }
+
+
+        //This is the summary for the account
+        public Map<String, Double> summaryByAccount(
+                List<Transaction> transactions) {
+
+            return transactions.stream()
+                    .filter(transaction ->
+                            transaction.getLedgerAccount() != null)
+                    .collect(Collectors.groupingBy(
+                            transaction ->
+                                    transaction.getLedgerAccount().getName(),
+                            Collectors.summingDouble(
+                                    Transaction::getAmount
+                            )
+                    ));
+        }
 }

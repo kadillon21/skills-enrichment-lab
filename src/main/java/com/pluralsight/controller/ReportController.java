@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reports")
@@ -63,12 +64,18 @@ public class ReportController {
 
         return ResponseEntity.ok(transactions);
     }
-//
-//    @GetMapping("/summary-by-account")
 
-    public ReportService getReportService() {
-        return reportService;
+    @GetMapping("/summary-by-account")
+    public ResponseEntity<Map<String, Double>> getSummaryByAccount() {
+
+        List<Transaction> transactions = transactionService.getAll();
+
+        Map<String, Double> summary = reportService.summaryByAccount(transactions);
+
+        return ResponseEntity.ok(summary);
     }
+
+
 
 
     // TODO: port the date-range logic already sitting in service/Reports.java —
