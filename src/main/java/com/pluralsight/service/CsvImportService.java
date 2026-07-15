@@ -1,6 +1,8 @@
 package com.pluralsight.service;
 
+import com.pluralsight.model.LedgerAccount;
 import com.pluralsight.model.Transaction;
+import com.pluralsight.repository.LedgerAccountRepository;
 import com.pluralsight.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,18 +15,22 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CsvImportService {
 
     private final TransactionRepository transactionRepository;
+    private final LedgerAccountRepository ledgerAccountRepository;
 
-    public CsvImportService(TransactionRepository transactionRepository) {
+    public CsvImportService(TransactionRepository transactionRepository,
+                             LedgerAccountRepository ledgerAccountRepository) {
         this.transactionRepository = transactionRepository;
+        this.ledgerAccountRepository = ledgerAccountRepository;
     }
 
-    // Same date|time|description|vendor|amount format as the old Ledger.loadTransactions() —
-    // just reading from an uploaded file instead of disk.
+    // date|time|description|vendor|amount|ledger_account_id
+    // ledger_account_id may be blank — transaction just stays unassigned.
     public ImportResult importCsv(MultipartFile file) throws IOException {
         List<Transaction> imported = new ArrayList<>();
         List<String> errors = new ArrayList<>();
@@ -42,7 +48,20 @@ public class CsvImportService {
                     String description = parts[2];
                     String vendor = parts[3];
                     double amount = Double.parseDouble(parts[4]);
-                    imported.add(new Transaction(date, time, description, vendor, amount));
+
+                    Transaction t = new Transaction(date, time, description, vendor, amount);
+
+                    if (parts.length > 5 && !parts[5].isBlank()) {
+                        Integer accountId = Integer.parseInt(parts[5].trim());
+                        Optional<LedgerAccount> account = ledgerAccountRepository.findById(accountId);
+                        if (account.isPresent()) {
+                            t.setLedgerAccount(account.get());
+                        } else {
+                            errors.add("Line " + lineNumber + ": ledger account id " + accountId + " not found — imported without a category");
+                        }
+                    }
+
+                    imported.add(t);
                 } catch (Exception e) {
                     errors.add("Line " + lineNumber + ": " + e.getMessage());
                 }

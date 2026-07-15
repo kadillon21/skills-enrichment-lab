@@ -4,6 +4,7 @@ import com.pluralsight.model.LedgerAccount;
 import com.pluralsight.service.LedgerAccountService;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,23 +26,27 @@ public class LedgerAccountController {
         this.ledgerAccountService = ledgerAccountService;
     }
     
+    @PreAuthorize("permitAll()")
     @GetMapping("")
     public ResponseEntity<List<LedgerAccount>> getAll() {
         return ResponseEntity.ok(ledgerAccountService.getAll());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("")
     public ResponseEntity<LedgerAccount> create(@RequestBody LedgerAccount ledgerAccount) {
         LedgerAccount saved = ledgerAccountService.create(ledgerAccount);
         return ResponseEntity.status(201).body(saved);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<LedgerAccount> update(@PathVariable int id, @RequestBody LedgerAccount ledgerAccount) {
         LedgerAccount updated = ledgerAccountService.update(id, ledgerAccount);
         return ResponseEntity.ok(updated);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable int id) {
         ledgerAccountService.delete(id);

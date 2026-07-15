@@ -1,10 +1,10 @@
 package com.pluralsight.controller;
 
-import com.pluralsight.repository.TransactionRepository;
 import com.pluralsight.service.CsvImportService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +19,7 @@ public class CsvImportController {
         this.csvImportService = csvImportService;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/import")
     public ResponseEntity<String> importCsv(@RequestParam("file") MultipartFile file) {
         try {
