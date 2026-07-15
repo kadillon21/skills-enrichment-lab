@@ -51,9 +51,8 @@ public class TransactionController {
                                                     @RequestParam(name = "ledgerId",required = false)Integer ledgerId,
                                                     @RequestParam(name = "minAmount", required = false)Double minAmount,
                                                     @RequestParam(name = "maxAmount",required = false)Double maxAmount,
-                                                    @RequestParam(name = "isPayment",required = false)Boolean isPayment,
-                                                    @RequestParam(name = "isDeposit", required = false)Boolean isDeposit){
-        return ResponseEntity.ok().body( transactionService.search(transactionId,minAmount,maxAmount,startDate,endDate,description,vendor,ledgerId,isDeposit,isPayment)) ;
+                                                    @RequestParam(name = "transType", required = false)String transType){
+        return ResponseEntity.ok().body( transactionService.search(transactionId,minAmount,maxAmount,startDate,endDate,description,vendor,ledgerId,transType));
     }
 
 
