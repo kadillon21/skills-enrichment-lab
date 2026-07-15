@@ -46,18 +46,24 @@ public class TransactionService {
 
     }
 
-    public List<Transaction> search(Integer transactionId , Double minAmount, Double maxAmount, LocalTime time, LocalDate date, String description, String vendor, Integer ledgerId){
-        List<Transaction> transactions = transactionId != null
-                ? transactionRepository.findByTransactionId(transactionId)
-                : transactionRepository.findAll();
+    public List<Transaction> search(Integer transactionId , Double minAmount, Double maxAmount, LocalDate startDate,LocalDate endDate, String description, String vendor, Integer ledgerId,Boolean isPayment,Boolean isDeposit){
+        List<Transaction> transactions;
+        if(transactionId != null){
+            Transaction t = transactionRepository.findById(transactionId).orElse(null);
+            transactions = (t != null) ? List.of(t) : List.of();
+        }else {
+            transactions = transactionRepository.findAll();
+        }
         return transactions.stream()
                 .filter(transaction -> minAmount == null || transaction.getAmount() >= minAmount )
                 .filter(transaction -> maxAmount == null || transaction.getAmount() <= maxAmount)
-                .filter(transaction -> time == null || time.equals(transaction.getTime()))
-                .filter(transaction -> date == null || date.equals(transaction.getDate()))
+                .filter(transaction -> startDate == null || !transaction.getDate().isBefore(startDate))
+                .filter(transaction -> endDate == null ||!transaction.getDate().isAfter(endDate))
                 .filter(transaction -> description == null || description.equalsIgnoreCase(transaction.getDescription()))
                 .filter(transaction -> vendor == null || vendor.equalsIgnoreCase(transaction.getVendor()))
                 .filter(transaction -> ledgerId == null || ledgerId.equals(transaction.getLedgerAccount().getId()))
+                .filter(transaction -> isDeposit == null || isDeposit.equals(transaction.isDeposit()))
+                .filter(transaction -> isPayment == null || isPayment .equals(transaction.isPayment()))
                 .toList();
     }
 

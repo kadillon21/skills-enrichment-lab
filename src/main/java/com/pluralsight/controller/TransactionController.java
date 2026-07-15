@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -41,6 +42,20 @@ public class TransactionController {
         return ResponseEntity.ok().body(transaction);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<Transaction>> search(@RequestParam(name = "transactionId",required = false)Integer transactionId,
+                                                    @RequestParam(name = "startDate", required = false )LocalDate startDate,
+                                                    @RequestParam(name = "endDate", required = false )LocalDate endDate,
+                                                    @RequestParam(name = "vendor", required = false)String vendor,
+                                                    @RequestParam(name = "description", required = false)String description,
+                                                    @RequestParam(name = "ledgerId",required = false)Integer ledgerId,
+                                                    @RequestParam(name = "minAmount", required = false)Double minAmount,
+                                                    @RequestParam(name = "maxAmount",required = false)Double maxAmount,
+                                                    @RequestParam(name = "isPayment",required = false)Boolean isPayment,
+                                                    @RequestParam(name = "isDeposit", required = false)Boolean isDeposit){
+        return ResponseEntity.ok().body( transactionService.search(transactionId,minAmount,maxAmount,startDate,endDate,description,vendor,ledgerId,isDeposit,isPayment)) ;
+    }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<Transaction> updateTransaction(@PathVariable Integer id, @RequestBody Transaction transaction){
@@ -60,10 +75,10 @@ public class TransactionController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Transaction> deleteTranaction(@PathVariable Integer transactionId){
-        if(transactionService.getById(transactionId) == null)
+    public ResponseEntity<Transaction> deleteTranaction(@PathVariable Integer id){
+        if(transactionService.getById(id) == null)
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        transactionService.deleteTransaction(transactionId);
+        transactionService.deleteTransaction(id);
         return ResponseEntity.noContent().build();
 
     }
