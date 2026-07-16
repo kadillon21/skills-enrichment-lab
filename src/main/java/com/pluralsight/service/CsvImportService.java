@@ -14,8 +14,9 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @Service
 public class CsvImportService {
@@ -36,6 +37,11 @@ public class CsvImportService {
         List<String> errors = new ArrayList<>();
         int lineNumber = 0;
 
+        Map<Integer, LedgerAccount> accountsById = new HashMap<>();
+        for (LedgerAccount account : ledgerAccountRepository.findAll()) {
+            accountsById.put(account.getId(), account);
+        }
+
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
             String line;
@@ -53,9 +59,9 @@ public class CsvImportService {
 
                     if (parts.length > 5 && !parts[5].isBlank()) {
                         Integer accountId = Integer.parseInt(parts[5].trim());
-                        Optional<LedgerAccount> account = ledgerAccountRepository.findById(accountId);
-                        if (account.isPresent()) {
-                            t.setLedgerAccount(account.get());
+                        LedgerAccount account = accountsById.get(accountId);
+                        if (account != null) {
+                            t.setLedgerAccount(account);
                         } else {
                             errors.add("Line " + lineNumber + ": ledger account id " + accountId + " not found — imported without a category");
                         }
