@@ -7,18 +7,21 @@ import com.pluralsight.cli.util.ConsoleUtilities;
 import com.pluralsight.cli.util.UserInput;
 import com.pluralsight.cli.ui.Menus;
 import com.pluralsight.repository.TransactionRepository;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
-
-public class Reports {
+@Service
+public class ReportService {
     //Injecting Repo
     private TransactionRepository transactionRepository;
 
     //Constructor
-    public Reports(TransactionRepository transactionRepository) {
+    public ReportService(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
     }
 
@@ -46,15 +49,15 @@ public class Reports {
 //                        && !transaction.getDate().isAfter(previousMonthEnd)).toList();
 //        Menus.displayTransactions(filtered);
 
-            LocalDate now = LocalDate.now();
-            LocalDate previousMonthStart = now.minusMonths(1).withDayOfMonth(1);
-            LocalDate previousMonthEnd = previousMonthStart.withDayOfMonth(previousMonthStart.lengthOfMonth());
+        LocalDate now = LocalDate.now();
+        LocalDate previousMonthStart = now.minusMonths(1).withDayOfMonth(1);
+        LocalDate previousMonthEnd = previousMonthStart.withDayOfMonth(previousMonthStart.lengthOfMonth());
 
-            return transactions.stream()
-                    .filter(transaction ->
-                            !transaction.getDate().isBefore(previousMonthStart)
-                                    && !transaction.getDate().isAfter(previousMonthEnd))
-                    .toList();
+        return transactions.stream()
+                .filter(transaction ->
+                        !transaction.getDate().isBefore(previousMonthStart)
+                                && !transaction.getDate().isAfter(previousMonthEnd))
+                .toList();
     }
 
     // displays transaction menu that shows transactions for the current year
@@ -120,6 +123,8 @@ public class Reports {
 
     }
 
+
+
     // Method to allow user to edit specific search criteria
     public static void editCriteria(SearchCriteria criteria) {
         Menus.editValuesMenu();
@@ -165,4 +170,21 @@ public class Reports {
 
         }
     }
+
+
+        //This is the summary for the account
+        public Map<String, Double> summaryByAccount(
+                List<Transaction> transactions) {
+
+            return transactions.stream()
+                    .filter(transaction ->
+                            transaction.getLedgerAccount() != null)
+                    .collect(Collectors.groupingBy(
+                            transaction ->
+                                    transaction.getLedgerAccount().getName(),
+                            Collectors.summingDouble(
+                                    Transaction::getAmount
+                            )
+                    ));
+        }
 }

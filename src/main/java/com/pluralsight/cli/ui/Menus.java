@@ -1,10 +1,10 @@
-package com.pluralsight.ui;
+package com.pluralsight.cli.ui;
 
 import com.pluralsight.model.SearchCriteria;
 import com.pluralsight.model.Transaction;
 import com.pluralsight.service.Ledger;
-import com.pluralsight.util.ConsoleUtilities;
-import com.pluralsight.util.UserInput;
+import com.pluralsight.cli.util.ConsoleUtilities;
+import com.pluralsight.cli.util.UserInput;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;

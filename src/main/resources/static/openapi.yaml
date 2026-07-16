@@ -1,0 +1,565 @@
+openapi: 3.0.3
+info:
+  title: Prestige Motors Group API
+  description: >
+    Account ledger API for Prestige Motors Group. Covers authentication,
+    transaction management, ledger account categorization, and reporting.
+
+
+    Status legend used in each endpoint's description:
+      - ✅ Implemented — live in the app right now
+      - 🚧 Planned — documented here as the team's agreed contract, not built yet
+  version: "0.1.0"
+servers:
+  - url: http://localhost:8080
+    description: Local dev
+
+tags:
+  - name: Auth
+  - name: Transactions
+  - name: Ledger Accounts
+  - name: Reports
+
+security:
+  - bearerAuth: []
+
+paths:
+
+  # ---------------- AUTH ----------------
+  /login:
+    post:
+      tags: [Auth]
+      summary: Log in
+      description: ✅ Implemented. Public — no token required.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDto'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponseDto'
+        '401':
+          description: Invalid username or password
+
+  /register:
+    post:
+      tags: [Auth]
+      summary: Register a new user account
+      description: >
+        ✅ Implemented, but currently open to anyone (permitAll). 🚧 Planned
+        change: restrict to admins only, so only a logged-in admin can create
+        new staff/admin accounts. Update this doc's `security` block once that
+        lands.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserDto'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Username already exists, or passwords don't match
+
+  # ---------------- TRANSACTIONS ----------------
+  /api/transactions:
+    get:
+      tags: [Transactions]
+      summary: List all transactions
+      description: ✅ Implemented. Admin + Staff.
+      responses:
+        '200':
+          description: List of transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+    post:
+      tags: [Transactions]
+      summary: Create a transaction
+      description: ✅ Implemented. Admin + Staff.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionInput'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+
+  /api/transactions/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: [Transactions]
+      summary: Get a single transaction
+      description: ✅ Implemented. Admin + Staff.
+      responses:
+        '200':
+          description: Transaction found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '404':
+          description: Not found
+    put:
+      tags: [Transactions]
+      summary: Update a transaction
+      description: 🚧 Planned. Admin + Staff.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionInput'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '404':
+          description: Not found
+    delete:
+      tags: [Transactions]
+      summary: Delete a transaction
+      description: 🚧 Planned. Admin only.
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Not found
+
+  /api/transactions/search:
+    get:
+      tags: [Transactions]
+      summary: Search/filter transactions
+      description: >
+        🚧 Planned. Admin + Staff. Query params mirror the existing
+        SearchCriteria fields from the CLI version.
+      parameters:
+        - name: startDate
+          in: query
+          schema: { type: string, format: date }
+        - name: endDate
+          in: query
+          schema: { type: string, format: date }
+        - name: vendor
+          in: query
+          schema: { type: string }
+        - name: description
+          in: query
+          schema: { type: string }
+        - name: minAmount
+          in: query
+          schema: { type: number }
+        - name: maxAmount
+          in: query
+          schema: { type: number }
+        - name: transType
+          in: query
+          schema: { type: string, enum: [PAYMENTS, DEPOSITS] }
+      responses:
+        '200':
+          description: Filtered transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+
+  /api/transactions/import:
+    post:
+      tags: [Transactions]
+      summary: Bulk import transactions from a CSV file
+      description: >
+        🚧 Planned — CsvImportService is written, but not yet wired to this
+        route. Admin only. File format: pipe-delimited
+        `date|time|description|vendor|amount` per line.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Import summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResult'
+
+  /api/transactions/export:
+    get:
+      tags: [Transactions]
+      summary: Export all transactions as CSV
+      description: 🚧 Planned stretch feature. Admin + Staff.
+      responses:
+        '200':
+          description: CSV file
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+
+  # ---------------- LEDGER ACCOUNTS ----------------
+  /api/ledger-accounts:
+    get:
+      tags: [Ledger Accounts]
+      summary: List all ledger accounts
+      description: 🚧 Planned. Admin + Staff (read-only for staff).
+      responses:
+        '200':
+          description: List of ledger accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LedgerAccount'
+    post:
+      tags: [Ledger Accounts]
+      summary: Create a ledger account
+      description: 🚧 Planned. Admin only.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LedgerAccountInput'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LedgerAccount'
+
+  /api/ledger-accounts/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    put:
+      tags: [Ledger Accounts]
+      summary: Update a ledger account
+      description: 🚧 Planned. Admin only.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LedgerAccountInput'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LedgerAccount'
+    delete:
+      tags: [Ledger Accounts]
+      summary: Delete a ledger account
+      description: >
+        🚧 Planned. Admin only. Team decision needed: reassign existing
+        transactions to "Uncategorized" first, or block delete if any
+        transactions still reference this account.
+      responses:
+        '204':
+          description: Deleted
+        '409':
+          description: Conflict — transactions still reference this account
+
+  /api/ledger-accounts/{id}/transactions:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: [Ledger Accounts]
+      summary: List all transactions under a ledger account
+      description: 🚧 Planned. Admin + Staff.
+      responses:
+        '200':
+          description: Transactions under this account
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+
+  # ---------------- REPORTS ----------------
+  /api/reports/month-to-date:
+    get:
+      tags: [Reports]
+      summary: Month-to-date report
+      description: 🚧 Planned — port logic from service/Reports.java. Admin + Staff.
+      responses:
+        '200':
+          description: Report result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportResult'
+
+  /api/reports/previous-month:
+    get:
+      tags: [Reports]
+      summary: Previous month report
+      description: 🚧 Planned. Admin + Staff.
+      responses:
+        '200':
+          description: Report result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportResult'
+
+  /api/reports/year-to-date:
+    get:
+      tags: [Reports]
+      summary: Year-to-date report
+      description: 🚧 Planned. Admin + Staff.
+      responses:
+        '200':
+          description: Report result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportResult'
+
+  /api/reports/by-vendor:
+    get:
+      tags: [Reports]
+      summary: Transactions grouped/filtered by vendor
+      description: 🚧 Planned. Admin + Staff.
+      parameters:
+        - name: vendor
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Report result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportResult'
+
+  /api/reports/summary-by-account:
+    get:
+      tags: [Reports]
+      summary: Totals grouped by ledger account
+      description: >
+        🚧 Planned. Admin + Staff. Combines the Reports feature with the new
+        Ledger Accounts feature — good demo visual.
+      responses:
+        '200':
+          description: Totals by account
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    ledgerAccount:
+                      $ref: '#/components/schemas/LedgerAccount'
+                    total:
+                      type: number
+                      format: double
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: >
+        Paste the `token` value returned from POST /login here (Swagger's
+        "Authorize" button, or Postman's Bearer Token auth type).
+
+  schemas:
+    LoginDto:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+
+    LoginResponseDto:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+
+    RegisterUserDto:
+      type: object
+      required: [username, password, confirmPassword, role]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+        confirmPassword:
+          type: string
+          format: password
+        role:
+          type: string
+          enum: [ADMIN, STAFF]
+
+    User:
+      type: object
+      description: >
+        Reflects actual JSON serialization — password and role string are
+        hidden (@JsonIgnore); authorities is what's actually exposed.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+        authorities:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: ROLE_ADMIN
+
+    LedgerAccountInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          example: Repair & Mechanic
+        description:
+          type: string
+          example: Vehicle repair and maintenance costs
+
+    LedgerAccount:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: integer
+              readOnly: true
+        - $ref: '#/components/schemas/LedgerAccountInput'
+
+    TransactionInput:
+      type: object
+      required: [date, time, description, vendor, amount]
+      properties:
+        date:
+          type: string
+          format: date
+          example: "2026-07-13"
+        time:
+          type: string
+          example: "14:30:00"
+        description:
+          type: string
+          example: Oil change service
+        vendor:
+          type: string
+          example: QuickLube Auto
+        amount:
+          type: number
+          format: double
+          example: -89.99
+        ledgerAccountId:
+          type: integer
+          nullable: true
+          description: FK to a LedgerAccount; null/omitted = Uncategorized
+
+    Transaction:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: integer
+              readOnly: true
+        - $ref: '#/components/schemas/TransactionInput'
+        - type: object
+          properties:
+            ledgerAccount:
+              $ref: '#/components/schemas/LedgerAccount'
+              nullable: true
+
+    ImportResult:
+      type: object
+      properties:
+        importedCount:
+          type: integer
+        errors:
+          type: array
+          items:
+            type: string
+
+    ReportResult:
+      type: object
+      description: Placeholder shape — finalize once Reports.java is ported
+      properties:
+        periodLabel:
+          type: string
+          example: "July 2026"
+        totalDeposits:
+          type: number
+          format: double
+        totalPayments:
+          type: number
+          format: double
+        netTotal:
+          type: number
+          format: double
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Transaction'

@@ -1,18 +1,18 @@
-package com.pluralsight.controller;
+package com.pluralsight.CommandLineRunner;
 
 import com.pluralsight.model.Transaction;
 import com.pluralsight.service.Ledger;
 import com.pluralsight.service.Reports;
-import com.pluralsight.ui.Menus;
-import com.pluralsight.util.ConsoleUtilities;
-import com.pluralsight.util.UserInput;
+import com.pluralsight.cli.ui.Menus;
+import com.pluralsight.cli.util.ConsoleUtilities;
+import com.pluralsight.cli.util.UserInput;
 
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
-public class AppController {
+public class  CliRouter{
 
     // creates a new ledger Object to be used throughout the program
     private final Ledger ledger = new Ledger();
