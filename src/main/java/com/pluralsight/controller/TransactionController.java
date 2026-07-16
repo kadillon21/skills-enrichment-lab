@@ -2,12 +2,11 @@ package com.pluralsight.controller;
 
 import com.pluralsight.model.Transaction;
 import com.pluralsight.repository.TransactionRepository;
-import com.pluralsight.service.CsvImportService;
 import com.pluralsight.service.TransactionService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -21,19 +20,20 @@ public class TransactionController {
 
     private final TransactionRepository transactionRepository;
     private final TransactionService transactionService;
-    private final CsvImportService csvImportService;
 
-    public TransactionController(TransactionRepository transactionRepository, TransactionService transactionService, CsvImportService csvImportService) {
+    public TransactionController(TransactionRepository transactionRepository, TransactionService transactionService) {
         this.transactionRepository = transactionRepository;
         this.transactionService = transactionService;
-        this.csvImportService = csvImportService;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
     @GetMapping
     public List<Transaction> getAll() {
         return transactionRepository.findAll();
     }
 
+
+    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
     @GetMapping("/{id}")
     public ResponseEntity <Transaction> getById(@PathVariable Integer id) {
         Transaction transaction = transactionService.getById(id);
@@ -43,6 +43,7 @@ public class TransactionController {
         return ResponseEntity.ok().body(transaction);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
     @GetMapping("/search")
     public ResponseEntity<List<Transaction>> search(@RequestParam(name = "transactionId",required = false)Integer transactionId,
                                                     @RequestParam(name = "startDate", required = false )LocalDate startDate,
@@ -56,6 +57,7 @@ public class TransactionController {
         return ResponseEntity.ok().body( transactionService.search(transactionId,minAmount,maxAmount,startDate,endDate,description,vendor,ledgerId,transType));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/export")
     public ResponseEntity<String> exportTransactions(){
         String cvsData = transactionService.exportCsv();
@@ -66,6 +68,7 @@ public class TransactionController {
     }
 
 
+    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
     @PutMapping("/{id}")
     public ResponseEntity<Transaction> updateTransaction(@PathVariable Integer id, @RequestBody Transaction transaction){
         // Check if it exists first
@@ -76,6 +79,7 @@ public class TransactionController {
         return ResponseEntity.ok().body(update);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
     @PostMapping()
     public ResponseEntity<Transaction> addTransaction(@RequestBody Transaction transaction){
         Transaction create = transactionService.createTransaction(transaction);
@@ -83,6 +87,7 @@ public class TransactionController {
 
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Transaction> deleteTranaction(@PathVariable Integer id){
         if(transactionService.getById(id) == null)
@@ -92,10 +97,4 @@ public class TransactionController {
 
     }
 
-    // TODO: POST /import allow upload of a CSV file
-    // TODO: PUT /{id} — reuse the getById() not-found pattern
-    // TODO: DELETE /{id}
-    // TODO: GET /search — accept SearchCriteria as query params. Start simple: findAll() +
-    //       SearchCriteria.matches() in-memory like the old CLI did; upgrade to a JPA
-    //       Specification later if the dataset gets big enough that this is slow.
 }

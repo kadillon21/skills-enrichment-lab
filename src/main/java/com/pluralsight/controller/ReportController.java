@@ -1,17 +1,18 @@
 package com.pluralsight.controller;
 
 import com.pluralsight.model.Transaction;
-import com.pluralsight.repository.TransactionRepository;
 import com.pluralsight.service.ReportService;
 import com.pluralsight.service.Reports;
 import com.pluralsight.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
+@PreAuthorize("hasRole('ADMIN, STAFF')")
 @RestController
 @RequestMapping("/api/reports")
 @CrossOrigin
@@ -74,12 +75,4 @@ public class ReportController {
 
         return ResponseEntity.ok(summary);
     }
-
-
-
-
-    // TODO: port the date-range logic already sitting in service/Reports.java —
-    // the filtering logic itself doesn't need to change, it just needs to read from
-    // transactionRepository.findAll() instead of the old in-memory list, and return
-    // the result instead of printing it to console.
 }
