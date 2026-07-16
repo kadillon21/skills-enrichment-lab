@@ -22,7 +22,6 @@ import com.pluralsight.service.UserService;
 
 @RestController
 @CrossOrigin
-@PreAuthorize("permitAll()")
 public class AuthenticationController {
 
     private final TokenProvider tokenProvider;
@@ -35,6 +34,7 @@ public class AuthenticationController {
         this.userService = userService;
     }
 
+    @PreAuthorize("permitAll()")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginDto loginDto) {
         try {
@@ -56,6 +56,7 @@ public class AuthenticationController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<User> register(@Valid @RequestBody RegisterUserDto newUser) {

@@ -26,14 +26,14 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
     @GetMapping
     public List<Transaction> getAll() {
         return transactionRepository.findAll();
     }
 
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
     @GetMapping("/{id}")
     public ResponseEntity <Transaction> getById(@PathVariable Integer id) {
         Transaction transaction = transactionService.getById(id);
@@ -43,7 +43,7 @@ public class TransactionController {
         return ResponseEntity.ok().body(transaction);
     }
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
     @GetMapping("/search")
     public ResponseEntity<List<Transaction>> search(@RequestParam(name = "transactionId",required = false)Integer transactionId,
                                                     @RequestParam(name = "startDate", required = false )LocalDate startDate,
@@ -68,7 +68,7 @@ public class TransactionController {
     }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
     @PutMapping("/{id}")
     public ResponseEntity<Transaction> updateTransaction(@PathVariable Integer id, @RequestBody Transaction transaction){
         // Check if it exists first
@@ -79,7 +79,7 @@ public class TransactionController {
         return ResponseEntity.ok().body(update);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
     @PostMapping()
     public ResponseEntity<Transaction> addTransaction(@RequestBody Transaction transaction){
         Transaction create = transactionService.createTransaction(transaction);
